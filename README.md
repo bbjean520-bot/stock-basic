@@ -10,20 +10,26 @@
 
 ---
 
-## 怎麼拿到檔案（大家都能用）
+## 怎麼裝（跟 AI 講，不要自己下載）
 
-任選一種：
+本知識包給課程兩套 AI 用：**Claude Code**、**Hermes**。學生把下面整段貼給正在用的那一套即可。
 
-1. **下載 ZIP**（最簡單）  
-   打開 repo 頁 → 綠色 **Code** → **Download ZIP** → 解壓縮。
+```text
+請把 https://github.com/duang0615/stock-basic 裝成我的個人 skill，名稱 stock-basic。
+你自己執行，不要叫我下載 ZIP 或手動複製檔案。
 
-2. **用 Git 複製**
+- 你是 Claude Code：裝到 ~/.claude/skills/stock-basic/
+- 你是 Hermes：裝到 ~/.hermes/skills/stock-basic/
+- Windows：把 ~ 換成 %USERPROFILE%
 
-```bash
-git clone https://github.com/duang0615/stock-basic.git
+資料夾不存在就 git clone --depth 1 https://github.com/duang0615/stock-basic.git 到上面的路徑。
+已存在就進該資料夾 git pull。
+必須整包 clone，不要只抓 SKILL.md（還要 core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md）。
+裝完確認這五個檔都在該資料夾根目錄，然後告訴我成功。
+之後問台股請遵守這個 skill：定義走百科，官方數字走證交所／櫃買／期交所 OpenAPI，附來源，非投資建議。
 ```
 
-解壓或 clone 後，記得裡面有這些檔：
+裝好後開新對話，或說「用 stock-basic」。要更新再說「把 stock-basic 從 GitHub pull 一次」。
 
 | 檔案 | 用途 |
 |------|------|
@@ -35,57 +41,10 @@ git clone https://github.com/duang0615/stock-basic.git
 
 ---
 
-## 怎麼給 AI 用（依你手上的工具）
+## 裝好之後怎麼問
 
-下面挑你有的做即可，**不必裝 Cursor**。
-
-### A. ChatGPT / Claude 網頁（最通用）
-
-1. 新建一個專案／自訂 GPT／Project（名稱可叫「台股常識」）。
-2. 把資料夾裡的 Markdown **全部上傳**當知識庫（至少要有 `SKILL.md`、`core-taiwan.md`、`glossary-cmoney.md`、`sources.md`、`openapi-tw.md`）。
-3. 在系統提示或專案說明貼一句：
-
-```text
-回答台股／投資名詞時，請遵守上傳的 SKILL.md：先查 glossary-cmoney.md 或 core-taiwan.md，
-官方數字走 openapi-tw.md；需要細節再請我提供百科或 API 連結；不要捏造定義；附上來源連結；非投資建議。
-```
-
-之後直接問「什麼是本益比」「三大法人是什麼」即可。
-
-### B. Claude Code / 終端機 AI
-
-把本 repo clone 到專案旁，開對話時指定：
-
-```text
-請先讀 stock-basic/SKILL.md 與 core-taiwan.md，之後用這套規則回答台股問題。
-```
-
-或把整個 `stock-basic` 資料夾加進工作區，讓 AI 能讀這些檔。
-
-### C. Cursor（可選）
-
-若你用 Cursor Agent Skills，把整個資料夾放到：
-
-- Windows：`C:\Users\<你的帳號>\.cursor\skills\stock-basic\`
-- macOS / Linux：`~/.cursor/skills/stock-basic/`
-
-重開 Agent 對話，或說「用 stock-basic」。  
-也可用 Cursor 的 skill／規則匯入功能指向本 repo 的 `SKILL.md`。
-
-### D. 其他編輯器（VS Code Copilot、Windsurf、Continue 等）
-
-把 `stock-basic` 放進工作區，或在規則／system prompt 寫：
-
-```text
-台股名詞請依 ./stock-basic/SKILL.md 與 glossary-cmoney.md 回答，並附來源連結。
-```
-
-### E. 自己查（不用 AI）
-
-- 先看 `core-taiwan.md` 建立框架  
-- 再在 `glossary-cmoney.md` 用搜尋找詞條，點連結到 CMoney 原文  
-- 公司／產業／冷門詞看 `sources.md` 的 MoneyDJ 查法  
-- 官方免費資料 API 看 `openapi-tw.md`，再到各站 Swagger 試呼叫  
+直接問「什麼是本益比」「現股當沖是什麼」「怎麼用官方 API 抓上市月營收」。  
+要更新 skill 時跟 AI 說：把 stock-basic 從 GitHub 再 pull 一次。
 
 ---
 
