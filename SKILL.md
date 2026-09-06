@@ -2,18 +2,21 @@
 name: stock-basic
 description: >-
   Taiwan finance literacy from CMoney + MoneyDJ wikis (術語、財報、籌碼、技術分析、
-  個股／產業百科). Use when the user asks stock basics, 台股名詞, investing 入門,
-  company/industry wiki lookup, or needs consistent Chinese finance definitions.
+  個股／產業百科), plus official free TWSE / TPEx / TAIFEX OpenAPI indexes.
+  Use when the user asks stock basics, 台股名詞, investing 入門,
+  company/industry wiki lookup, official open data APIs, or needs
+  consistent Chinese finance definitions.
 ---
 
 # stock-basic（股票基本知識）
 
-雙來源 skill，回答台股／投資常識時使用。
+百科雙來源＋官方開放資料，回答台股／投資常識與官方數字時使用。
 
 | 來源 | 擅長 | 入口 |
 |------|------|------|
 | [CMoney 財經百科](https://wiki.cmoney.tw/finance/) | 標準術語定義、入門解說、六大分類索引 | 約 800+ 概念詞 |
 | [MoneyDJ 財經百科](https://www.moneydj.com/KMDJ/Wiki/WikiHome.aspx) | 超大詞庫、**公司／產業**條目、技術法則、社群更新 | 宣稱約 5 萬+ 詞條 |
+| 官方 OpenAPI（證交所／櫃買／期交所） | 免費、免金鑰的開放資料（行情快照、財報、籌碼、期貨） | 見 [openapi-tw.md](openapi-tw.md) |
 
 ## 何時用哪個來源
 
@@ -21,13 +24,14 @@ description: >-
 2. **上市公司、產業、冷門術語、葛蘭碧等寶典** → 開 MoneyDJ 首頁或站內搜尋，再 `WebFetch` 詞條頁（`WikiViewer.aspx?keyid=...`）。
 3. **兩邊都有** → 以 CMoney 當清楚定義骨架，MoneyDJ 補實務例子／公司脈絡；衝突時兩邊都標來源，勿混成一家之言。
 4. **台股市場骨架**（證交所、三大法人、融資融券等）→ 先讀 [core-taiwan.md](core-taiwan.md)。
+5. **要官方數字／名單**（收盤行情、月營收、休市日、上櫃三大法人、期貨 Put/Call 等）→ 先讀 [openapi-tw.md](openapi-tw.md)，再 `GET` 對應端點；完整清單以各站 Swagger 為準。
 
 ## 工作流程
 
-1. 分類問題：定義／公司／產業／技術／總經／稅務。
-2. 依上表選來源；需要精確原文時再 fetch，**禁止捏造定義**。
-3. 回答附來源連結（CMoney article URL 或 MoneyDJ WikiViewer URL）。
-4. 即時股價、下單建議不在本 skill 範圍；行情資料改走 `finmind` 或其他資料 API。
+1. 分類問題：定義／公司／產業／技術／總經／稅務／**官方資料**。
+2. 依上表選來源；需要精確原文或欄位時再 fetch，**禁止捏造定義或欄位名**。
+3. 回答附來源連結（CMoney article URL、MoneyDJ WikiViewer URL，或實際呼叫的 OpenAPI URL）。
+4. 即時 tick、下單不在本 skill 範圍。歷史或官方快照優先走 [openapi-tw.md](openapi-tw.md) 的免費 API；需要更長歷史或便利封裝時再輔以 FinMind 等第三方。
 
 ## 回答原則
 
@@ -41,6 +45,7 @@ description: >-
 - [core-taiwan.md](core-taiwan.md) — 台股速查骨架
 - [glossary-cmoney.md](glossary-cmoney.md) — CMoney 詞條 → URL 索引
 - [sources.md](sources.md) — 兩站差異與查詢方式
+- [openapi-tw.md](openapi-tw.md) — 證交所／櫃買／期交所免費 OpenAPI
 
 ## 完成標準
 

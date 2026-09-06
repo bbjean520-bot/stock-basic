@@ -19,6 +19,18 @@
 3. 詞條 URL 形如：`https://www.moneydj.com/KMDJ/Wiki/WikiViewer.aspx?keyid=<uuid>`  
 4. `WebFetch` 該頁後再摘要；保留 keyid 連結給使用者。
 
+## 官方免費 OpenAPI（數字，不是百科）
+
+名詞解釋仍走上面兩站。要**官方開放資料**時改讀 [openapi-tw.md](openapi-tw.md)：
+
+| 站 | Swagger UI |
+|----|------------|
+| 臺灣證券交易所（上市） | https://openapi.twse.com.tw/ |
+| 證券櫃檯買賣中心（上櫃／興櫃等） | https://www.tpex.org.tw/openapi/ |
+| 臺灣期貨交易所（期貨／選擇權） | https://openapi.taifex.com.tw/ |
+
+免註冊、免金鑰；多數是最新一期快照，不是任意區間歷史庫，也不是即時串流。
+
 ## 授權與引用
 
-兩站內容皆為原站著作；本 skill 只做**索引與查閱流程**，回答時應附原連、勿整篇轉貼當自有著作上傳散佈。
+百科與官方資料皆為原站著作；本 skill 只做**索引與查閱流程**，回答時應附原連、勿整篇轉貼當自有著作上傳散佈。 OpenAPI 另須遵守各交易所使用條款與[政府資料開放授權](https://data.gov.tw/license)。

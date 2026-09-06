@@ -4,8 +4,9 @@
 
 - [CMoney 財經百科](https://wiki.cmoney.tw/finance/)：術語定義、入門解說較清楚
 - [MoneyDJ 財經百科](https://www.moneydj.com/KMDJ/Wiki/WikiHome.aspx)：詞庫大、公司／產業條目多
+- 官方免費 OpenAPI：[證交所](https://openapi.twse.com.tw/)、[櫃買](https://www.tpex.org.tw/openapi/)、[期交所](https://openapi.taifex.com.tw/)（免金鑰，見 `openapi-tw.md`）
 
-給人查、也給各種 AI 助手當參考資料用。**不是投資建議**，也不是即時行情。
+給人查、也給各種 AI 助手當參考資料用。**不是投資建議**，也不是即時行情串流。
 
 ---
 
@@ -30,6 +31,7 @@ git clone https://github.com/duang0615/stock-basic.git
 | `core-taiwan.md` | 台股骨架速查（市場、籌碼、財報、技術面） |
 | `glossary-cmoney.md` | CMoney 詞條索引＋文章連結 |
 | `sources.md` | 兩站差異與 MoneyDJ 查法 |
+| `openapi-tw.md` | 證交所／櫃買／期交所免費 OpenAPI 入口與常用端點 |
 
 ---
 
@@ -40,12 +42,12 @@ git clone https://github.com/duang0615/stock-basic.git
 ### A. ChatGPT / Claude 網頁（最通用）
 
 1. 新建一個專案／自訂 GPT／Project（名稱可叫「台股常識」）。
-2. 把資料夾裡的 Markdown **全部上傳**當知識庫（至少要有 `SKILL.md`、`core-taiwan.md`、`glossary-cmoney.md`、`sources.md`）。
+2. 把資料夾裡的 Markdown **全部上傳**當知識庫（至少要有 `SKILL.md`、`core-taiwan.md`、`glossary-cmoney.md`、`sources.md`、`openapi-tw.md`）。
 3. 在系統提示或專案說明貼一句：
 
 ```text
 回答台股／投資名詞時，請遵守上傳的 SKILL.md：先查 glossary-cmoney.md 或 core-taiwan.md，
-需要細節再請我提供百科連結；不要捏造定義；附上來源連結；非投資建議。
+官方數字走 openapi-tw.md；需要細節再請我提供百科或 API 連結；不要捏造定義；附上來源連結；非投資建議。
 ```
 
 之後直接問「什麼是本益比」「三大法人是什麼」即可。
@@ -83,16 +85,18 @@ git clone https://github.com/duang0615/stock-basic.git
 - 先看 `core-taiwan.md` 建立框架  
 - 再在 `glossary-cmoney.md` 用搜尋找詞條，點連結到 CMoney 原文  
 - 公司／產業／冷門詞看 `sources.md` 的 MoneyDJ 查法  
+- 官方免費資料 API 看 `openapi-tw.md`，再到各站 Swagger 試呼叫  
 
 ---
 
-## 兩站怎麼選（簡記）
+## 怎麼選（簡記）
 
 | 你想問的 | 優先 |
 |----------|------|
 | 名詞定義、公式、投資入門 | CMoney（索引在 `glossary-cmoney.md`） |
 | 上市公司、產業、冷門術語、技術寶典 | MoneyDJ（見 `sources.md`） |
 | 兩邊都有 | 定義以 CMoney 為主，MoneyDJ 補例子；衝突就兩邊都標來源 |
+| 官方行情／財報／籌碼／期貨開放資料 | 證交所／櫃買／期交所 OpenAPI（見 `openapi-tw.md`） |
 
 細節規則寫在 `SKILL.md`。
 
@@ -101,5 +105,5 @@ git clone https://github.com/duang0615/stock-basic.git
 ## 注意
 
 - 百科原文版權屬原站；本 repo 只做索引、摘要流程與查閱指引，請點回原站看全文。
-- 不含即時股價／下單功能；行情請另接資料來源（券商 API、FinMind 等）。
+- 不含即時 tick／下單功能。官方快照走 `openapi-tw.md`；更長歷史或封裝 API 可另接券商、FinMind 等。
 - 內容僅供學習，**不構成任何投資建議**。

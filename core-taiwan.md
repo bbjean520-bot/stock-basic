@@ -59,6 +59,10 @@
 2. 產業差異大時（例如本益比），不要給「全球單一理想值」當鐵律。  
 3. 信用交易、放空、衍生性商品：明確標出槓桿與強制平倉／追繳風險。
 
+## 官方開放資料
+
+要查實際數字（收盤、月營收、休市日、上櫃三大法人、期貨行情）時，用三個免費、免金鑰的官方 OpenAPI，索引在 [openapi-tw.md](openapi-tw.md)。百科只負責「詞是什麼」，不負責即時或歷史行情。
+
 ## 延伸
 
-完整詞條與 URL：[glossary-index.md](glossary-index.md)
+完整詞條與 URL：[glossary-cmoney.md](glossary-cmoney.md)
