@@ -1,18 +1,16 @@
 # 訊號牆機器規格。門檻可改；name 字串不可改。
 # 給其他 AI：做出 全部 / 趨勢向上 / 趨勢向下 三頁，每列 name + 通知我。
+# when = 人話條件（必讀）；fire = 同一條件的可跑寫法。
 version: 1
 market: TW
 color: red_up_green_down
-tabs:
-  all: 全部
-  up: 趨勢向上訊號
-  down: 趨勢向下訊號
+tabs: {all: 全部, up: 趨勢向上訊號, down: 趨勢向下訊號}
 notify_label: 通知我
 defaults:
-  kd: { n: 9, k_smooth: 3, d_smooth: 3 }
-  macd: { fast: 12, slow: 26, signal: 9 }
-  ma: { month: 20, quarter: 60, half_year: 120, week20: 20 }
-  lookback_days: { week: 5, month: 20, quarter: 60 }
+  kd: {n: 9, k_smooth: 3, d_smooth: 3}
+  macd: {fast: 12, slow: 26, signal: 9}
+  ma: {month: 20, quarter: 60, half_year: 120, week20: 20}
+  lookback_days: {week: 5, month: 20, quarter: 60}
   volume_spike_mult: 1.5
   long_red_body_pct: 3.0
   near_ma_pct: 1.5
@@ -29,409 +27,401 @@ universe:
   default: twse_tpex_common
   exclude: [disposition, full_delivery]
   xiaohu_list: user_supplied
-
 signals:
-  # --- 向上：創高／放量突破 ---
-  - id: week_new_high
-    name: 股價創週新高強勢股
-    tab: up
-    side: long
-    family: new_high
-    cadence: eod
-    core: new_high
-    inputs: [daily_ohlc]
-    fire: close > max(high over previous lookback_days.week bars, excluding today)
-
-  - id: month_new_high
-    name: 股價創月新高強勢股
-    tab: up
-    side: long
-    family: new_high
-    cadence: eod
-    core: new_high
-    inputs: [daily_ohlc]
-    fire: close > max(high over previous lookback_days.month bars, excluding today)
-
-  - id: quarter_new_high
-    name: 股價創季新高強勢股
-    tab: up
-    side: long
-    family: new_high
-    cadence: eod
-    core: new_high
-    inputs: [daily_ohlc]
-    fire: close > max(high over previous lookback_days.quarter bars, excluding today)
-
-  - id: vol_break_5h
-    name: 放量突破5日新高
-    tab: up
-    side: long
-    family: new_high
-    cadence: eod
-    core: vol_break_n_high
-    inputs: [daily_ohlc]
-    fire: close > max(high[-5:-1]) AND volume > volume_spike_mult * SMA(volume, 5)
-
-  - id: vol_break_20h
-    name: 放量突破20日新高
-    tab: up
-    side: long
-    family: new_high
-    cadence: eod
-    core: vol_break_n_high
-    inputs: [daily_ohlc]
-    fire: close > max(high[-20:-1]) AND volume > volume_spike_mult * SMA(volume, 20)
-
-  - id: vol_break_60h
-    name: 放量突破60日新高
-    tab: up
-    side: long
-    family: new_high
-    cadence: eod
-    core: vol_break_n_high
-    inputs: [daily_ohlc]
-    fire: close > max(high[-60:-1]) AND volume > volume_spike_mult * SMA(volume, 20)
-
-  - id: vol_strong
-    name: 放量強勢股
-    tab: up
-    side: long
-    family: volume
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: volume > volume_spike_mult * SMA(volume, 20) AND close > open AND close > close[1]
-
-  # --- 向上：均線 ---
-  - id: break_ma20
-    name: 突破月線轉多股
-    tab: up
-    side: long
-    family: ma
-    cadence: eod
-    pair: break_ma60_down
-    inputs: [daily_ohlc]
-    fire: close[1] <= MA(close, 20) AND close > MA(close, 20)
-
-  - id: break_ma60
-    name: 突破季線轉多股
-    tab: up
-    side: long
-    family: ma
-    cadence: eod
-    pair: break_ma60_down
-    inputs: [daily_ohlc]
-    fire: close[1] <= MA(close, 60) AND close > MA(close, 60)
-
-  - id: break_ma20w
-    name: 股價突破20週均線
-    tab: up
-    side: long
-    family: ma
-    cadence: eod
-    pair: break_ma20w_down
-    inputs: [weekly_ohlc]
-    fire: weekly_close[1] <= MA(weekly_close, 20) AND weekly_close > MA(weekly_close, 20)
-
-  - id: ma_golden_cross
-    name: 均線黃金交叉由弱轉強股
-    tab: up
-    side: long
-    family: ma
-    cadence: eod
-    pair: ma_death_cross
-    inputs: [daily_ohlc]
-    fire: MA(close, 5)[1] <= MA(close, 20)[1] AND MA(close, 5) > MA(close, 20)
-
-  - id: bounce_ma120_long_red
-    name: 半年線反彈長紅股
-    tab: up
-    side: long
-    family: candle
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: |
-      abs(low - MA(close, 120)) / MA(close, 120) * 100 <= near_ma_pct
-      AND close > open
-      AND (close - open) / close * 100 >= long_red_body_pct
-      AND close > MA(close, 120)
-
-  # --- 向上：KD / MACD ---
-  - id: kd_golden_cross
-    name: KD黃金交叉
-    tab: up
-    side: long
-    family: kd
-    cadence: eod
-    core: kd_golden
-    pair: kd_death_cross
-    inputs: [daily_ohlc]
-    fire: K[1] <= D[1] AND K > D
-
-  - id: kd_golden_cross_short
-    name: KD黃金交叉短線轉強股
-    tab: up
-    side: long
-    family: kd
-    cadence: eod
-    core: kd_golden
-    pair: kd_death_cross_short
-    inputs: [daily_ohlc]
-    fire: K[1] <= D[1] AND K > D
-
-  - id: kd_oversold_vol_cross
-    name: KD低檔放量交叉
-    tab: up
-    side: long
-    family: kd
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: K[1] <= D[1] AND K > D AND K < kd_oversold AND D < kd_oversold AND volume > volume_spike_mult * SMA(volume, 20)
-
-  - id: kd_bull_div
-    name: 股價新低但KD背離短多股
-    tab: up
-    side: long
-    family: kd
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: |
-      close == min(close over last 20 bars)
-      AND K > min(K over last 20 bars)
-      AND K > K[1]
-
-  - id: macd_dif_cross_up
-    name: DIF-MACD由負轉正
-    tab: up
-    side: long
-    family: macd
-    cadence: eod
-    pair: macd_dif_cross_down
-    inputs: [daily_ohlc]
-    fire: DIF[1] <= 0 AND DIF > 0
-
-  # --- 向上：K 棒／連漲 ---
-  - id: long_red_turn
-    name: 長紅轉多股
-    tab: up
-    side: long
-    family: candle
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: close > open AND (close - open) / close * 100 >= long_red_body_pct AND close > MA(close, 20)
-
-  - id: deep_drop_long_red
-    name: 跌深發動長紅股
-    tab: up
-    side: long
-    family: candle
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: |
-      (max(close over last deep_drop_days bars) - close[1]) / max(close over last deep_drop_days bars) * 100 >= deep_drop_pct
-      AND close > open
-      AND (close - open) / close * 100 >= long_red_body_pct
-
-  - id: sideways_break_long_red
-    name: 橫盤突破長紅棒
-    tab: up
-    side: long
-    family: candle
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: |
-      (max(high[-sideways_days:-1]) - min(low[-sideways_days:-1])) / close[1] * 100 <= sideways_range_pct
-      AND close > max(high[-sideways_days:-1])
-      AND close > open
-      AND (close - open) / close * 100 >= long_red_body_pct
-
-  - id: up_2d
-    name: 連漲兩天強勢股
-    tab: up
-    side: long
-    family: streak
-    cadence: eod
-    pair: down_2d
-    inputs: [daily_ohlc]
-    fire: close > close[1] AND close[1] > close[2]
-
-  - id: up_3d
-    name: 連漲三天強勢股
-    tab: up
-    side: long
-    family: streak
-    cadence: eod
-    pair: down_3d
-    inputs: [daily_ohlc]
-    fire: close > close[1] AND close[1] > close[2] AND close[2] > close[3]
-
-  # --- 向上：逐筆／漲停時段 ---
-  - id: tick_ask_10
-    name: 連續10筆外盤價成交
-    tab: up
-    side: long
-    family: tick
-    cadence: tick
-    pair: tick_bid_10
-    inputs: [ticks, bid, ask]
-    fire: last consecutive_ticks trades all have price >= ask_at_trade
-
-  - id: xiaohu_limit_before_1000
-    name: 小虎隊概念股(10:00前快漲停)
-    tab: up
-    side: long
-    family: theme
-    cadence: intradaily
-    core: xiaohu_near_limit
-    inputs: [intraday_quote, user_list]
-    fire: code in user_xiaohu_list AND near_limit_up AND time in [09:00, 10:00)
-
-  - id: xiaohu_limit_after_1200
-    name: 小虎隊概念股(12:00後快漲停)
-    tab: up
-    side: long
-    family: theme
-    cadence: intradaily
-    core: xiaohu_near_limit
-    inputs: [intraday_quote, user_list]
-    fire: code in user_xiaohu_list AND near_limit_up AND time in [12:00, 13:30]
-
-  - id: xiaohu_limit_after_1250
-    name: 小虎隊概念股(12:50後快漲停)
-    tab: up
-    side: long
-    family: theme
-    cadence: intradaily
-    core: xiaohu_near_limit
-    inputs: [intraday_quote, user_list]
-    fire: code in user_xiaohu_list AND near_limit_up AND time in [12:50, 13:30]
-
-  # --- 向下：均線 ---
-  - id: break_ma60_down
-    name: 跌破季線轉空股
-    tab: down
-    side: short
-    family: ma
-    cadence: eod
-    pair: break_ma60
-    inputs: [daily_ohlc]
-    fire: close[1] >= MA(close, 60) AND close < MA(close, 60)
-
-  - id: break_ma20w_down
-    name: 股價跌破20週均線
-    tab: down
-    side: short
-    family: ma
-    cadence: eod
-    pair: break_ma20w
-    inputs: [weekly_ohlc]
-    fire: weekly_close[1] >= MA(weekly_close, 20) AND weekly_close < MA(weekly_close, 20)
-
-  - id: ma_death_cross
-    name: 均線死亡交叉由強轉弱股
-    tab: down
-    side: short
-    family: ma
-    cadence: eod
-    pair: ma_golden_cross
-    inputs: [daily_ohlc]
-    fire: MA(close, 5)[1] >= MA(close, 20)[1] AND MA(close, 5) < MA(close, 20)
-
-  # --- 向下：KD / MACD ---
-  - id: kd_death_cross
-    name: KD死亡交叉
-    tab: down
-    side: short
-    family: kd
-    cadence: eod
-    core: kd_death
-    pair: kd_golden_cross
-    inputs: [daily_ohlc]
-    fire: K[1] >= D[1] AND K < D
-
-  - id: kd_death_cross_short
-    name: KD死亡交叉短線轉弱股
-    tab: down
-    side: short
-    family: kd
-    cadence: eod
-    core: kd_death
-    pair: kd_golden_cross_short
-    inputs: [daily_ohlc]
-    fire: K[1] >= D[1] AND K < D
-
-  - id: macd_dif_cross_down
-    name: DIF-MACD由正轉負
-    tab: down
-    side: short
-    family: macd
-    cadence: eod
-    pair: macd_dif_cross_up
-    inputs: [daily_ohlc]
-    fire: DIF[1] >= 0 AND DIF < 0
-
-  # --- 向下：連續／跌停 ---
-  - id: down_3d
-    name: 連跌三天弱勢股
-    tab: down
-    side: short
-    family: streak
-    cadence: eod
-    pair: up_3d
-    inputs: [daily_ohlc]
-    fire: close < close[1] AND close[1] < close[2] AND close[2] < close[3]
-
-  - id: down_2d
-    name: 連跌兩天弱勢股
-    tab: down
-    side: short
-    family: streak
-    cadence: eod
-    pair: up_2d
-    inputs: [daily_ohlc]
-    fire: close < close[1] AND close[1] < close[2]
-
-  - id: bear_bounce_2d
-    name: 連漲2日空頭強勢股
-    tab: down
-    side: short
-    family: streak
-    cadence: eod
-    inputs: [daily_ohlc]
-    fire: close < MA(close, 60) AND close > close[1] AND close[1] > close[2]
-
-  - id: limit_down_today
-    name: 今日跌停股
-    tab: down
-    side: short
-    family: limit
-    cadence: intradaily
-    inputs: [intraday_quote]
-    fire: last_price <= limit_down_price
-
-  - id: limit_down_locked
-    name: 跌停鎖死股
-    tab: down
-    side: short
-    family: limit
-    cadence: intradaily
-    inputs: [intraday_quote, order_book]
-    fire: last_price <= limit_down_price AND (bid is empty OR bid_price < limit_down_price)
-
-  - id: limit_down_opened
-    name: 跌停打開
-    tab: down
-    side: short
-    family: limit
-    cadence: intradaily
-    inputs: [intraday_quote]
-    fire: today already traded at limit_down_price AND last_price > limit_down_price
-
-  - id: tick_bid_10
-    name: 連續10筆內盤價成交
-    tab: down
-    side: short
-    family: tick
-    cadence: tick
-    pair: tick_ask_10
-    inputs: [ticks, bid, ask]
-    fire: last consecutive_ticks trades all have price <= bid_at_trade
+- id: week_new_high
+  name: 股價創週新高強勢股
+  when: 今天收盤價，高於不含今天、最近 5 個交易日的最高價。
+  tab: up
+  side: long
+  family: new_high
+  cadence: eod
+  core: new_high
+  inputs: [daily_ohlc]
+  fire: close > max(high over previous lookback_days.week bars, excluding today)
+- id: month_new_high
+  name: 股價創月新高強勢股
+  when: 今天收盤價，高於不含今天、最近 20 個交易日的最高價。
+  tab: up
+  side: long
+  family: new_high
+  cadence: eod
+  core: new_high
+  inputs: [daily_ohlc]
+  fire: close > max(high over previous lookback_days.month bars, excluding today)
+- id: quarter_new_high
+  name: 股價創季新高強勢股
+  when: 今天收盤價，高於不含今天、最近 60 個交易日的最高價。
+  tab: up
+  side: long
+  family: new_high
+  cadence: eod
+  core: new_high
+  inputs: [daily_ohlc]
+  fire: close > max(high over previous lookback_days.quarter bars, excluding today)
+- id: vol_break_5h
+  name: 放量突破5日新高
+  when: 今天收盤創最近 5 日新高（不含今天的最高），且成交量大於近 5 日均量的 1.5 倍。
+  tab: up
+  side: long
+  family: new_high
+  cadence: eod
+  core: vol_break_n_high
+  inputs: [daily_ohlc]
+  fire: close > max(high[-5:-1]) AND volume > volume_spike_mult * SMA(volume, 5)
+- id: vol_break_20h
+  name: 放量突破20日新高
+  when: 今天收盤創最近 20 日新高（不含今天的最高），且成交量大於近 20 日均量的 1.5 倍。
+  tab: up
+  side: long
+  family: new_high
+  cadence: eod
+  core: vol_break_n_high
+  inputs: [daily_ohlc]
+  fire: close > max(high[-20:-1]) AND volume > volume_spike_mult * SMA(volume, 20)
+- id: vol_break_60h
+  name: 放量突破60日新高
+  when: 今天收盤創最近 60 日新高（不含今天的最高），且成交量大於近 20 日均量的 1.5 倍。
+  tab: up
+  side: long
+  family: new_high
+  cadence: eod
+  core: vol_break_n_high
+  inputs: [daily_ohlc]
+  fire: close > max(high[-60:-1]) AND volume > volume_spike_mult * SMA(volume, 20)
+- id: vol_strong
+  name: 放量強勢股
+  when: 今天成交量大於近 20 日均量的 1.5 倍，且收紅（收盤高於開盤）、收盤高於昨天收盤。
+  tab: up
+  side: long
+  family: volume
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: volume > volume_spike_mult * SMA(volume, 20) AND close > open AND close > close[1]
+- id: break_ma20
+  name: 突破月線轉多股
+  when: 月線＝日線收盤價的 20 日平均。昨天收盤還在月線下方（含剛好碰到），今天收盤站上月線。原本就站在月線上不算突破。
+  tab: up
+  side: long
+  family: ma
+  cadence: eod
+  pair: break_ma60_down
+  inputs: [daily_ohlc]
+  fire: close[1] <= MA(close, 20) AND close > MA(close, 20)
+- id: break_ma60
+  name: 突破季線轉多股
+  when: 季線＝日線收盤價的 60 日平均。昨天收盤還在季線下方（含剛好碰到），今天收盤站上季線。原本就站在季線上不算。
+  tab: up
+  side: long
+  family: ma
+  cadence: eod
+  pair: break_ma60_down
+  inputs: [daily_ohlc]
+  fire: close[1] <= MA(close, 60) AND close > MA(close, 60)
+- id: break_ma20w
+  name: 股價突破20週均線
+  when: 用週K，不是日K。20週均線＝週收盤價的 20 週平均。上一週收盤還在這條線下方，本週收盤站上去。
+  tab: up
+  side: long
+  family: ma
+  cadence: eod
+  pair: break_ma20w_down
+  inputs: [weekly_ohlc]
+  fire: weekly_close[1] <= MA(weekly_close, 20) AND weekly_close > MA(weekly_close, 20)
+- id: ma_golden_cross
+  name: 均線黃金交叉由弱轉強股
+  when: 5 日均線從下方穿過 20 日均線：昨天 5MA 還 ≤ 20MA，今天 5MA > 20MA。
+  tab: up
+  side: long
+  family: ma
+  cadence: eod
+  pair: ma_death_cross
+  inputs: [daily_ohlc]
+  fire: MA(close, 5)[1] <= MA(close, 20)[1] AND MA(close, 5) > MA(close, 20)
+- id: bounce_ma120_long_red
+  name: 半年線反彈長紅股
+  when: 半年線＝日線收盤 120 日平均。今天最低價靠近半年線（差距 ≤ 1.5%），收出實體 ≥ 3% 的長紅，且收盤站上半年線。
+  tab: up
+  side: long
+  family: candle
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: |
+    abs(low - MA(close, 120)) / MA(close, 120) * 100 <= near_ma_pct
+    AND close > open
+    AND (close - open) / close * 100 >= long_red_body_pct
+    AND close > MA(close, 120)
+- id: kd_golden_cross
+  name: KD黃金交叉
+  when: KD 用 (9,3,3)。昨天 K 還 ≤ D，今天 K 上穿 D。
+  tab: up
+  side: long
+  family: kd
+  cadence: eod
+  core: kd_golden
+  pair: kd_death_cross
+  inputs: [daily_ohlc]
+  fire: K[1] <= D[1] AND K > D
+- id: kd_golden_cross_short
+  name: KD黃金交叉短線轉強股
+  when: 與「KD黃金交叉」同一條：昨天 K ≤ D，今天 K 上穿 D。
+  tab: up
+  side: long
+  family: kd
+  cadence: eod
+  core: kd_golden
+  pair: kd_death_cross_short
+  inputs: [daily_ohlc]
+  fire: K[1] <= D[1] AND K > D
+- id: kd_oversold_vol_cross
+  name: KD低檔放量交叉
+  when: KD 在低檔（K、D 都低於 20）發生黃金交叉，且今天成交量大於近 20 日均量的 1.5 倍。
+  tab: up
+  side: long
+  family: kd
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: K[1] <= D[1] AND K > D AND K < kd_oversold AND D < kd_oversold AND volume > volume_spike_mult * SMA(volume, 20)
+- id: kd_bull_div
+  name: 股價新低但KD背離短多股
+  when: 今天收盤創近 20 日收盤新低，但 K 值不是近 20 日最低，而且 K 比昨天高（價新低、KD 沒跟著新低）。
+  tab: up
+  side: long
+  family: kd
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: |
+    close == min(close over last 20 bars)
+    AND K > min(K over last 20 bars)
+    AND K > K[1]
+- id: macd_dif_cross_up
+  name: DIF-MACD由負轉正
+  when: MACD 用 (12,26,9)。昨天 DIF ≤ 0，今天 DIF > 0（DIF 從零軸下方穿到上方）。
+  tab: up
+  side: long
+  family: macd
+  cadence: eod
+  pair: macd_dif_cross_down
+  inputs: [daily_ohlc]
+  fire: DIF[1] <= 0 AND DIF > 0
+- id: long_red_turn
+  name: 長紅轉多股
+  when: 今天收紅，實體（收盤−開盤）≥ 收盤價的 3%，且收盤站上 20 日均線。
+  tab: up
+  side: long
+  family: candle
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: close > open AND (close - open) / close * 100 >= long_red_body_pct AND close > MA(close, 20)
+- id: deep_drop_long_red
+  name: 跌深發動長紅股
+  when: 昨天之前近 5 日從高點算下來跌了至少 8%，今天收出實體 ≥ 3% 的長紅。
+  tab: up
+  side: long
+  family: candle
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: |
+    (max(close over last deep_drop_days bars) - close[1]) / max(close over last deep_drop_days bars) * 100 >= deep_drop_pct
+    AND close > open
+    AND (close - open) / close * 100 >= long_red_body_pct
+- id: sideways_break_long_red
+  name: 橫盤突破長紅棒
+  when: 不含今天的近 10 日，高低差 ≤ 8%（橫盤）。今天收盤突破這 10 日最高，且收出實體 ≥ 3% 的長紅。
+  tab: up
+  side: long
+  family: candle
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: |
+    (max(high[-sideways_days:-1]) - min(low[-sideways_days:-1])) / close[1] * 100 <= sideways_range_pct
+    AND close > max(high[-sideways_days:-1])
+    AND close > open
+    AND (close - open) / close * 100 >= long_red_body_pct
+- id: up_2d
+  name: 連漲兩天強勢股
+  when: 今天收盤高於昨天，昨天收盤高於前天（連兩天收漲）。
+  tab: up
+  side: long
+  family: streak
+  cadence: eod
+  pair: down_2d
+  inputs: [daily_ohlc]
+  fire: close > close[1] AND close[1] > close[2]
+- id: up_3d
+  name: 連漲三天強勢股
+  when: 連三天收盤都高於前一天。
+  tab: up
+  side: long
+  family: streak
+  cadence: eod
+  pair: down_3d
+  inputs: [daily_ohlc]
+  fire: close > close[1] AND close[1] > close[2] AND close[2] > close[3]
+- id: tick_ask_10
+  name: 連續10筆外盤價成交
+  when: 最近連續 10 筆成交價都 ≥ 成交當下的賣一價（外盤、吃賣單）。
+  tab: up
+  side: long
+  family: tick
+  cadence: tick
+  pair: tick_bid_10
+  inputs: [ticks, bid, ask]
+  fire: last consecutive_ticks trades all have price >= ask_at_trade
+- id: xiaohu_limit_before_1000
+  name: 小虎隊概念股(10:00前快漲停)
+  when: 代碼在使用者提供的小虎隊名單裡；現價接近漲停（漲幅 ≥ 8% 或距漲停價很近）；台北時間 09:00–10:00。沒有名單就不要猜個股。
+  tab: up
+  side: long
+  family: theme
+  cadence: intradaily
+  core: xiaohu_near_limit
+  inputs: [intraday_quote, user_list]
+  fire: code in user_xiaohu_list AND near_limit_up AND time in [09:00, 10:00)
+- id: xiaohu_limit_after_1200
+  name: 小虎隊概念股(12:00後快漲停)
+  when: 在小虎隊名單裡、接近漲停，且時間在 12:00–13:30。
+  tab: up
+  side: long
+  family: theme
+  cadence: intradaily
+  core: xiaohu_near_limit
+  inputs: [intraday_quote, user_list]
+  fire: code in user_xiaohu_list AND near_limit_up AND time in [12:00, 13:30]
+- id: xiaohu_limit_after_1250
+  name: 小虎隊概念股(12:50後快漲停)
+  when: 在小虎隊名單裡、接近漲停，且時間在 12:50–13:30。
+  tab: up
+  side: long
+  family: theme
+  cadence: intradaily
+  core: xiaohu_near_limit
+  inputs: [intraday_quote, user_list]
+  fire: code in user_xiaohu_list AND near_limit_up AND time in [12:50, 13:30]
+- id: break_ma60_down
+  name: 跌破季線轉空股
+  when: 季線＝日線收盤 60 日平均。昨天收盤還在季線上方（含碰到），今天收盤跌破季線。原本就在季線下不算。
+  tab: down
+  side: short
+  family: ma
+  cadence: eod
+  pair: break_ma60
+  inputs: [daily_ohlc]
+  fire: close[1] >= MA(close, 60) AND close < MA(close, 60)
+- id: break_ma20w_down
+  name: 股價跌破20週均線
+  when: 用週K。上一週收盤還在 20 週均線上方，本週收盤跌破。
+  tab: down
+  side: short
+  family: ma
+  cadence: eod
+  pair: break_ma20w
+  inputs: [weekly_ohlc]
+  fire: weekly_close[1] >= MA(weekly_close, 20) AND weekly_close < MA(weekly_close, 20)
+- id: ma_death_cross
+  name: 均線死亡交叉由強轉弱股
+  when: 5 日均線從上方穿過 20 日均線：昨天 5MA ≥ 20MA，今天 5MA < 20MA。
+  tab: down
+  side: short
+  family: ma
+  cadence: eod
+  pair: ma_golden_cross
+  inputs: [daily_ohlc]
+  fire: MA(close, 5)[1] >= MA(close, 20)[1] AND MA(close, 5) < MA(close, 20)
+- id: kd_death_cross
+  name: KD死亡交叉
+  when: KD (9,3,3)。昨天 K ≥ D，今天 K 下穿 D。
+  tab: down
+  side: short
+  family: kd
+  cadence: eod
+  core: kd_death
+  pair: kd_golden_cross
+  inputs: [daily_ohlc]
+  fire: K[1] >= D[1] AND K < D
+- id: kd_death_cross_short
+  name: KD死亡交叉短線轉弱股
+  when: 與「KD死亡交叉」同一條：昨天 K ≥ D，今天 K 下穿 D。
+  tab: down
+  side: short
+  family: kd
+  cadence: eod
+  core: kd_death
+  pair: kd_golden_cross_short
+  inputs: [daily_ohlc]
+  fire: K[1] >= D[1] AND K < D
+- id: macd_dif_cross_down
+  name: DIF-MACD由正轉負
+  when: 昨天 DIF ≥ 0，今天 DIF < 0（DIF 從零軸上方穿到下方）。
+  tab: down
+  side: short
+  family: macd
+  cadence: eod
+  pair: macd_dif_cross_up
+  inputs: [daily_ohlc]
+  fire: DIF[1] >= 0 AND DIF < 0
+- id: down_3d
+  name: 連跌三天弱勢股
+  when: 連三天收盤都低於前一天。
+  tab: down
+  side: short
+  family: streak
+  cadence: eod
+  pair: up_3d
+  inputs: [daily_ohlc]
+  fire: close < close[1] AND close[1] < close[2] AND close[2] < close[3]
+- id: down_2d
+  name: 連跌兩天弱勢股
+  when: 今天收盤低於昨天，昨天收盤低於前天。
+  tab: down
+  side: short
+  family: streak
+  cadence: eod
+  pair: up_2d
+  inputs: [daily_ohlc]
+  fire: close < close[1] AND close[1] < close[2]
+- id: bear_bounce_2d
+  name: 連漲2日空頭強勢股
+  when: 今天收盤仍在季線（60日）下方，但連漲兩天（空頭裡的反彈，不是轉多）。
+  tab: down
+  side: short
+  family: streak
+  cadence: eod
+  inputs: [daily_ohlc]
+  fire: close < MA(close, 60) AND close > close[1] AND close[1] > close[2]
+- id: limit_down_today
+  name: 今日跌停股
+  when: 最新成交價 ≤ 該檔今日官方跌停價。
+  tab: down
+  side: short
+  family: limit
+  cadence: intradaily
+  inputs: [intraday_quote]
+  fire: last_price <= limit_down_price
+- id: limit_down_locked
+  name: 跌停鎖死股
+  when: 最新成交價在跌停，而且買盤幾乎沒了（沒有買一，或買一價低於跌停）。
+  tab: down
+  side: short
+  family: limit
+  cadence: intradaily
+  inputs: [intraday_quote, order_book]
+  fire: last_price <= limit_down_price AND (bid is empty OR bid_price < limit_down_price)
+- id: limit_down_opened
+  name: 跌停打開
+  when: 今天曾經成交在跌停價，但現在最新價已經高於跌停價。
+  tab: down
+  side: short
+  family: limit
+  cadence: intradaily
+  inputs: [intraday_quote]
+  fire: today already traded at limit_down_price AND last_price > limit_down_price
+- id: tick_bid_10
+  name: 連續10筆內盤價成交
+  when: 最近連續 10 筆成交價都 ≤ 成交當下的買一價（內盤、吃買單）。
+  tab: down
+  side: short
+  family: tick
+  cadence: tick
+  pair: tick_ask_10
+  inputs: [ticks, bid, ask]
+  fire: last consecutive_ticks trades all have price <= bid_at_trade
