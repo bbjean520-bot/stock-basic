@@ -63,6 +63,15 @@
 
 要查實際數字（收盤、月營收、休市日、上櫃三大法人、期貨行情）時，用三個免費、免金鑰的官方 OpenAPI，索引在 [openapi-tw.md](openapi-tw.md)。百科只負責「詞是什麼」，不負責即時或歷史行情。
 
+## 常見多空訊號牆
+
+看盤軟體那種「趨勢向上／趨勢向下＋通知我」清單，拆成可計算規則，給其他 AI 架訊號牆：
+
+- 說明：[signals-wall.md](signals-wall.md)
+- 規格：[signals-wall.yaml](signals-wall.yaml)
+
+訊號只是條件成立，**不是**進場單。
+
 ## 延伸
 
 完整詞條與 URL：[glossary-cmoney.md](glossary-cmoney.md)

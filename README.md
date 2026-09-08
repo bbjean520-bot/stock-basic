@@ -24,9 +24,9 @@
 
 資料夾不存在就 git clone --depth 1 https://github.com/duang0615/stock-basic.git 到上面的路徑。
 已存在就進該資料夾 git pull。
-必須整包 clone，不要只抓 SKILL.md（還要 core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md）。
-裝完確認這五個檔都在該資料夾根目錄，然後告訴我成功。
-之後問台股請遵守這個 skill：定義走百科，官方數字走證交所／櫃買／期交所 OpenAPI，附來源，非投資建議。
+必須整包 clone，不要只抓 SKILL.md（還要 core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、signals-wall.md、signals-wall.yaml）。
+裝完確認 SKILL.md、core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、signals-wall.md、signals-wall.yaml 都在該資料夾根目錄，然後告訴我成功。
+之後問台股請遵守這個 skill：定義走百科，官方數字走證交所／櫃買／期交所 OpenAPI；要做訊號牆就讀 signals-wall.md／yaml。附來源，非投資建議。
 ```
 
 裝好後開新對話，或說「用 stock-basic」。要更新再說「把 stock-basic 從 GitHub pull 一次」。
@@ -38,6 +38,8 @@
 | `glossary-cmoney.md` | CMoney 詞條索引＋文章連結 |
 | `sources.md` | 兩站差異與 MoneyDJ 查法 |
 | `openapi-tw.md` | 證交所／櫃買／期交所免費 OpenAPI 入口與常用端點 |
+| `signals-wall.md` | 常見多空策略：給其他 AI 架「訊號牆」的說明 |
+| `signals-wall.yaml` | 訊號牆機器規格（名稱、多空、觸發條件、資料欄位） |
 
 ---
 
@@ -56,6 +58,7 @@
 | 上市公司、產業、冷門術語、技術寶典 | MoneyDJ（見 `sources.md`） |
 | 兩邊都有 | 定義以 CMoney 為主，MoneyDJ 補例子；衝突就兩邊都標來源 |
 | 官方行情／財報／籌碼／期貨開放資料 | 證交所／櫃買／期交所 OpenAPI（見 `openapi-tw.md`） |
+| 常見多空訊號、訊號牆、通知我 | `signals-wall.md`＋`signals-wall.yaml`（可計算規則，不是明牌） |
 
 細節規則寫在 `SKILL.md`。
 

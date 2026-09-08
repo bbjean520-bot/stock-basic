@@ -4,8 +4,9 @@ description: >-
   Taiwan finance literacy from CMoney + MoneyDJ wikis (術語、財報、籌碼、技術分析、
   個股／產業百科), plus official free TWSE / TPEx / TAIFEX OpenAPI indexes.
   Use when the user asks stock basics, 台股名詞, investing 入門,
-  company/industry wiki lookup, official open data APIs, or needs
-  consistent Chinese finance definitions.
+  company/industry wiki lookup, official open data APIs, needs
+  consistent Chinese finance definitions, or wants a 訊號牆 /
+  常見多空策略 / 趨勢向上訊號 / 趨勢向下訊號 / 通知我.
 ---
 
 # stock-basic（股票基本知識）
@@ -25,13 +26,14 @@ description: >-
 3. **兩邊都有** → 以 CMoney 當清楚定義骨架，MoneyDJ 補實務例子／公司脈絡；衝突時兩邊都標來源，勿混成一家之言。
 4. **台股市場骨架**（證交所、三大法人、融資融券等）→ 先讀 [core-taiwan.md](core-taiwan.md)。
 5. **要官方數字／名單**（收盤行情、月營收、休市日、上櫃三大法人、期貨 Put/Call 等）→ 先讀 [openapi-tw.md](openapi-tw.md)，再 `GET` 對應端點；完整清單以各站 Swagger 為準。
+6. **訊號牆／常見多空策略／通知我** → 先讀 [signals-wall.md](signals-wall.md) 與 [signals-wall.yaml](signals-wall.yaml)。照 YAML 的 `name`、`tab`、`fire`、`cadence` 做三頁牆；門檻用 `defaults`。不要改中文名稱、不要發明小虎隊成分股、不要保證獲利或自動下單。
 
 ## 工作流程
 
-1. 分類問題：定義／公司／產業／技術／總經／稅務／**官方資料**。
+1. 分類問題：定義／公司／產業／技術／總經／稅務／**官方資料**／**訊號牆**。
 2. 依上表選來源；需要精確原文或欄位時再 fetch，**禁止捏造定義或欄位名**。
 3. 回答附來源連結（CMoney article URL、MoneyDJ WikiViewer URL，或實際呼叫的 OpenAPI URL）。
-4. 即時 tick、下單不在本 skill 範圍。歷史或官方快照優先走 [openapi-tw.md](openapi-tw.md) 的免費 API；需要更長歷史或便利封裝時再輔以 FinMind 等第三方。
+4. 即時 tick、下單不在本 skill 範圍。歷史或官方快照優先走 [openapi-tw.md](openapi-tw.md) 的免費 API；需要更長歷史或便利封裝時再輔以 FinMind 等第三方。訊號牆只提供規則；真正盤中推播要接券商或行情來源。
 
 ## 回答原則
 
@@ -46,6 +48,8 @@ description: >-
 - [glossary-cmoney.md](glossary-cmoney.md) — CMoney 詞條 → URL 索引
 - [sources.md](sources.md) — 兩站差異與查詢方式
 - [openapi-tw.md](openapi-tw.md) — 證交所／櫃買／期交所免費 OpenAPI
+- [signals-wall.md](signals-wall.md) — 常見多空策略：給其他 AI 架訊號牆
+- [signals-wall.yaml](signals-wall.yaml) — 訊號牆機器規格
 
 ## 完成標準
 
