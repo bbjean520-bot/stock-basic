@@ -10,6 +10,19 @@
 
 ---
 
+## 硬規則（分析可以做，但不能猜）
+
+使用者要求時，**可以**做相關分析（例如用官方數字算訊號、對表、比較）。但分析與數字答案必須來自本包指定、且**實際查到**的資料庫／開放資料，例如：
+
+- 官方數字：證交所／櫃買／期交所 OpenAPI（見 `openapi-tw.md`）
+- 名詞定義：已開啟的 CMoney／MoneyDJ 百科頁
+- 訊號規則：`signals-wall.md`／`signals-wall.yaml`，再用上面查到的數據去算
+
+**禁止**用資料庫以外的答案充當分析結果，包括：模型自己的記憶、沒查過的網頁傳聞、過期印象、估算或拼湊出來的數字。  
+資料沒查到、欄位對不上、或來源失敗時，直接說「查不到／無法驗證」，**不准猜測補完**。
+
+---
+
 ## 怎麼裝（跟 AI 講，不要自己下載）
 
 本知識包給課程兩套 AI 用：**Claude Code**、**Hermes**。學生把下面整段貼給正在用的那一套即可。
@@ -26,7 +39,7 @@
 已存在就進該資料夾 git pull。
 必須整包 clone，不要只抓 SKILL.md（還要 core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、signals-wall.md、signals-wall.yaml）。
 裝完確認 SKILL.md、core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、signals-wall.md、signals-wall.yaml 都在該資料夾根目錄，然後告訴我成功。
-之後問台股請遵守這個 skill：定義走百科，官方數字走證交所／櫃買／期交所 OpenAPI；要做訊號牆就讀 signals-wall.md／yaml。附來源，非投資建議。
+之後問台股請遵守這個 skill：定義走百科，官方數字走證交所／櫃買／期交所 OpenAPI；要做訊號牆就讀 signals-wall.md／yaml。使用者要求時可以做相關分析，但必須用本包指定資料庫實際查到的數據；沒查到就說查不到。禁止用庫外來源、訓練記憶或猜測當答案。附來源，非投資建議。
 ```
 
 裝好後開新對話，或說「用 stock-basic」。要更新再說「把 stock-basic 從 GitHub pull 一次」。
@@ -67,5 +80,6 @@
 ## 注意
 
 - 百科原文版權屬原站；本 repo 只做索引、摘要流程與查閱指引，請點回原站看全文。
-- 不含即時 tick／下單功能。官方快照走 `openapi-tw.md`；更長歷史或封裝 API 可另接券商、FinMind 等。
+- 不含即時 tick／下單功能。官方快照走 `openapi-tw.md`；更長歷史或便利封裝可另接券商、FinMind 等，但仍須實際取數，不能用記憶或猜測代替。
+- 分析可以依使用者要求提供，但只能建立在本包指定資料庫的真實查詢結果上；庫外答案與猜測一律禁止。
 - 內容僅供學習，**不構成任何投資建議**。
