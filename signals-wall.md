@@ -38,6 +38,8 @@
 
 宇宙預設：上市＋上櫃普通股。處置股、全額交割先排除，除非使用者點名要看。
 
+盤中最新成交（偶爾、低頻）可打證交所 MIS，見 [quotes-realtime.md](quotes-realtime.md)。**不要**用 MIS 做 `tick` 或每分鐘 `intraday`；那是網站內部端點，條款禁止大量自動抓取。高頻／五檔／逐筆請接券商或付費源。收盤 eod 仍走 [openapi-tw.md](openapi-tw.md)。
+
 ---
 
 ## 台股慣例（寫程式時釘死）

@@ -4,9 +4,10 @@
 
 - [CMoney 財經百科](https://wiki.cmoney.tw/finance/)：術語定義、入門解說較清楚
 - [MoneyDJ 財經百科](https://www.moneydj.com/KMDJ/Wiki/WikiHome.aspx)：詞庫大、公司／產業條目多
-- 官方免費 OpenAPI：[證交所](https://openapi.twse.com.tw/)、[櫃買](https://www.tpex.org.tw/openapi/)、[期交所](https://openapi.taifex.com.tw/)（免金鑰，見 `openapi-tw.md`）
+- 官方免費 OpenAPI：[證交所](https://openapi.twse.com.tw/)、[櫃買](https://www.tpex.org.tw/openapi/)、[期交所](https://openapi.taifex.com.tw/)（免金鑰，見 `openapi-tw.md`；**只有盤後，沒有即時**）
+- 盤中最新價：證交所 MIS 網站 JSON（低頻）＋ Yahoo 備援（見 `quotes-realtime.md`）
 
-給人查、也給各種 AI 助手當參考資料用。**不是投資建議**，也不是即時行情串流。
+給人查、也給各種 AI 助手當參考資料用。**不是投資建議**，也不是 tick 串流或下單。
 
 ---
 
@@ -15,6 +16,7 @@
 使用者要求時，**可以**做相關分析（例如用官方數字算訊號、對表、比較）。但分析與數字答案必須來自本包指定、且**實際查到**的資料庫／開放資料，例如：
 
 - 官方數字：證交所／櫃買／期交所 OpenAPI（見 `openapi-tw.md`）
+- 盤中最新價：證交所 MIS／Yahoo（見 `quotes-realtime.md`；須實際查到，且 MIS 低頻）
 - 名詞定義：已開啟的 CMoney／MoneyDJ 百科頁
 - 訊號規則：`signals-wall.md`／`signals-wall.yaml`，再用上面查到的數據去算
 
@@ -37,9 +39,9 @@
 
 資料夾不存在就 git clone --depth 1 https://github.com/duang0615/stock-basic.git 到上面的路徑。
 已存在就進該資料夾 git pull。
-必須整包 clone，不要只抓 SKILL.md（還要 core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、signals-wall.md、signals-wall.yaml）。
-裝完確認 SKILL.md、core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、signals-wall.md、signals-wall.yaml 都在該資料夾根目錄，然後告訴我成功。
-之後問台股請遵守這個 skill：定義走百科，官方數字走證交所／櫃買／期交所 OpenAPI；要做訊號牆就讀 signals-wall.md／yaml。使用者要求時可以做相關分析，但必須用本包指定資料庫實際查到的數據；沒查到就說查不到。禁止用庫外來源、訓練記憶或猜測當答案。附來源，非投資建議。
+必須整包 clone，不要只抓 SKILL.md（還要 core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、quotes-realtime.md、signals-wall.md、signals-wall.yaml）。
+裝完確認 SKILL.md、core-taiwan.md、glossary-cmoney.md、sources.md、openapi-tw.md、quotes-realtime.md、signals-wall.md、signals-wall.yaml 都在該資料夾根目錄，然後告訴我成功。
+之後問台股請遵守這個 skill：定義走百科，官方盤後數字走證交所／櫃買／期交所 OpenAPI，盤中現價走 quotes-realtime.md（MIS 低頻、Yahoo 備援）；要做訊號牆就讀 signals-wall.md／yaml。使用者要求時可以做相關分析，但必須用本包指定資料庫實際查到的數據；沒查到就說查不到。禁止用庫外來源、訓練記憶或猜測當答案。附來源，非投資建議。
 ```
 
 裝好後開新對話，或說「用 stock-basic」。要更新再說「把 stock-basic 從 GitHub pull 一次」。
@@ -50,7 +52,8 @@
 | `core-taiwan.md` | 台股骨架速查（市場、籌碼、財報、技術面） |
 | `glossary-cmoney.md` | CMoney 詞條索引＋文章連結 |
 | `sources.md` | 兩站差異與 MoneyDJ 查法 |
-| `openapi-tw.md` | 證交所／櫃買／期交所免費 OpenAPI 入口與常用端點 |
+| `openapi-tw.md` | 證交所／櫃買／期交所免費 OpenAPI 入口與常用端點（盤後） |
+| `quotes-realtime.md` | 盤中最新價：MIS JSON、Yahoo 備援、券商／付費源 |
 | `signals-wall.md` | 常見多空策略：給其他 AI 架「訊號牆」的說明 |
 | `signals-wall.yaml` | 訊號牆機器規格（名稱、多空、觸發條件、資料欄位） |
 
@@ -58,7 +61,7 @@
 
 ## 裝好之後怎麼問
 
-直接問「什麼是本益比」「現股當沖是什麼」「怎麼用官方 API 抓上市月營收」。  
+直接問「什麼是本益比」「現股當沖是什麼」「怎麼用官方 API 抓上市月營收」「2330 現在多少錢」。  
 要更新 skill 時跟 AI 說：把 stock-basic 從 GitHub 再 pull 一次。
 
 ---
@@ -70,7 +73,8 @@
 | 名詞定義、公式、投資入門 | CMoney（索引在 `glossary-cmoney.md`） |
 | 上市公司、產業、冷門術語、技術寶典 | MoneyDJ（見 `sources.md`） |
 | 兩邊都有 | 定義以 CMoney 為主，MoneyDJ 補例子；衝突就兩邊都標來源 |
-| 官方行情／財報／籌碼／期貨開放資料 | 證交所／櫃買／期交所 OpenAPI（見 `openapi-tw.md`） |
+| 官方行情／財報／籌碼／期貨開放資料 | 證交所／櫃買／期交所 OpenAPI（見 `openapi-tw.md`；盤後） |
+| 盤中現價／最新成交 | `quotes-realtime.md`（MIS 低頻；Yahoo 備援；高頻走券商） |
 | 常見多空訊號、訊號牆、通知我 | `signals-wall.md`＋`signals-wall.yaml`（可計算規則，不是明牌） |
 
 細節規則寫在 `SKILL.md`。
@@ -80,6 +84,6 @@
 ## 注意
 
 - 百科原文版權屬原站；本 repo 只做索引、摘要流程與查閱指引，請點回原站看全文。
-- 不含即時 tick／下單功能。官方快照走 `openapi-tw.md`；更長歷史或便利封裝可另接券商、FinMind 等，但仍須實際取數，不能用記憶或猜測代替。
+- 不含 tick 串流／下單。盤後官方快照走 `openapi-tw.md`；偶爾查盤中最新價走 `quotes-realtime.md`（MIS 是網站內部端點，須低頻，條款禁止大量自動抓取）。更長歷史或高頻行情可另接券商、FinMind 等，但仍須實際取數，不能用記憶或猜測代替。
 - 分析可以依使用者要求提供，但只能建立在本包指定資料庫的真實查詢結果上；庫外答案與猜測一律禁止。
 - 內容僅供學習，**不構成任何投資建議**。

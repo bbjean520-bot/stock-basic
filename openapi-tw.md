@@ -5,6 +5,8 @@
 
 **不是即時報價串流，也不是下單 API。** 多數端點是最新一期（或最近交易日）快照。資料與條款屬原站，引用請註明來源。
 
+盤中最新成交價不在這三套 OpenAPI 裡。偶爾查現價見 [quotes-realtime.md](quotes-realtime.md)（證交所 MIS 網站內部 JSON，須低頻；Yahoo 備援）。
+
 | 市場 | 官方文件（Swagger UI） | 規格檔 | Base URL | 端點數（撰寫時） |
 |------|------------------------|--------|----------|------------------|
 | 上市（證交所 TWSE） | https://openapi.twse.com.tw/ | https://openapi.twse.com.tw/swagger.json | `https://openapi.twse.com.tw/v1` | 143 |
@@ -39,7 +41,7 @@
 2. **快照不是歷史庫。** 多數回「最新一期／最近交易日」全市場陣列。要歷史就自己定期抓下來存。
 3. **回傳幾乎都是 JSON 陣列**，欄位值常是**字串**（數字也是字串），空值可能是全形空白或「－」。
 4. **日期格式不統一。** TWSE／TPEx 常見民國年（`1150904`＝2026-09-04）；TAIFEX 常見西元（`20260904`）。先看回傳再轉。
-5. **官方未在回應裡標明確速率限制。** 請節流、快取、失敗重試；不要高頻輪詢當即時行情。條款也禁止用爬蟲去抓**非 OpenAPI** 的官網頁。
+5. **官方未在回應裡標明確速率限制。** 請節流、快取、失敗重試；**不要把 OpenAPI 當即時行情**（這裡沒有盤中價）。偶爾查現價見 [quotes-realtime.md](quotes-realtime.md)。條款禁止大量自動抓取**非 OpenAPI** 官網；MIS 即使能打也必須低頻，禁止當爬蟲。
 6. **櫃買部分路徑會 302 回官網首頁。** 先在 [Swagger](https://www.tpex.org.tw/openapi/) 用 Try it out 確認；請求可加上與官方 UI 相同的快取標頭：`If-Modified-Since: Mon, 26 Jul 1997 05:00:00 GMT`、`Cache-Control: no-cache`、`Pragma: no-cache`。
 7. **端點會增刪改名。** 本檔是索引；以各站 `swagger.json` 為準。
 
@@ -159,7 +161,7 @@ Invoke-RestMethod https://www.tpex.org.tw/openapi/v1/tpex_mainboard_quotes -Head
 1. 先判斷市場（上市／上櫃／期貨），再選上表端點；沒列出的先開該站 Swagger 搜 summary。
 2. 需要精確欄位時再 `GET` 該 URL 或抓 `swagger.json`，**不要捏造欄位名**。
 3. 回答時附**實際呼叫的官方 URL**；寫日期要標民國或西元。
-4. 不要把快照講成「任意歷史區間查詢」，也不要講成即時 tick。
-5. 百科定義仍走 CMoney／MoneyDJ；官方 API 只負責**數字與名單**。
+4. 不要把快照講成「任意歷史區間查詢」，也不要講成即時 tick。即時／盤中最新價改讀 [quotes-realtime.md](quotes-realtime.md)。
+5. 百科定義仍走 CMoney／MoneyDJ；官方 API 只負責**盤後數字與名單**。
 
-對照：[core-taiwan.md](core-taiwan.md)（市場骨架）、[sources.md](sources.md)（百科怎麼查）。
+對照：[core-taiwan.md](core-taiwan.md)（市場骨架）、[sources.md](sources.md)（百科怎麼查）、[quotes-realtime.md](quotes-realtime.md)（盤中最新價）。
